@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curupira — Coletor de Dados de Campo 100% Offline</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#2E6F40', // Primary Forest Green
+                            900: '#1E462B', // Dark Forest Green
+                            950: '#0f2918',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-forest-800 selection:text-white">
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo / Title -->
+            <a href="#home" class="flex items-center space-x-3 group">
+                <img src="tekoa_logo.png" alt="Curupira Logo" class="w-12 h-12 rounded-xl shadow-lg border border-emerald-700/30 object-cover group-hover:scale-105 transition-transform">
+                <div>
+                    <span class="text-xl font-extrabold text-forest-900 tracking-tight block">Curupira</span>
+                    <span class="text-xs font-semibold text-forest-700 uppercase tracking-widest lang-text" data-pt="Field Sampler" data-en="Field Sampler" data-es="Recolector de Campo">Field Sampler</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <a href="#home" class="hover:text-forest-800 transition-colors lang-text" data-pt="Início" data-en="Home" data-es="Inicio">Início</a>
+                <a href="#legend" class="hover:text-forest-800 transition-colors lang-text" data-pt="A Lenda" data-en="The Legend" data-es="La Leyenda">A Lenda</a>
+                <a href="#features" class="hover:text-forest-800 transition-colors lang-text" data-pt="Recursos" data-en="Features" data-es="Características">Recursos</a>
+                <a href="#screenshots" class="hover:text-forest-800 transition-colors lang-text" data-pt="Telas do App" data-en="Screenshots" data-es="Capturas de Pantalla">Telas do App</a>
+                <a href="#manual" class="hover:text-forest-800 transition-colors lang-text" data-pt="Manual Detalhado" data-en="Detailed Manual" data-es="Manual Detallado">Manual Detalhado</a>
+                <a href="#quickstart" class="hover:text-forest-800 transition-colors lang-text" data-pt="Guia Rápido de Uso" data-en="Quick Start Guide" data-es="Guía Rápida de Uso">Guia Rápido de Uso</a>
+                <a href="#privacy" class="hover:text-forest-800 transition-colors lang-text" data-pt="Privacidade" data-en="Privacy Policy" data-es="Privacidad">Privacidade</a>
+            </nav>
+
+            <!-- Right Actions: Language Selector & Google Play CTA -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Selector Dropdown / Tabs -->
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button onclick="setLanguage('pt')" id="lang-btn-pt" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-forest-800 text-white shadow-sm transition-all">PT</button>
+                    <button onclick="setLanguage('en')" id="lang-btn-en" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all">EN</button>
+                    <button onclick="setLanguage('es')" id="lang-btn-es" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all">ES</button>
+                </div>
+
+                <!-- Google Play Button CTA -->
+                <a href="https://play.google.com/store" target="_blank" class="hidden sm:inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-md transition-all transform hover:-translate-y-0.5">
+                    <i class="fa-brands fa-google-play text-base"></i>
+                    <span class="lang-text" data-pt="Baixar na Google Play" data-en="Get it on Google Play" data-es="Disponible en Google Play">Baixar na Google Play</span>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-700 hover:text-forest-800 p-2 text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-6 py-4 space-y-3 shadow-lg">
+            <a href="#home" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Início" data-en="Home" data-es="Inicio">Início</a>
+            <a href="#legend" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="A Lenda" data-en="The Legend" data-es="La Leyenda">A Lenda</a>
+            <a href="#features" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Recursos" data-en="Features" data-es="Características">Recursos</a>
+            <a href="#screenshots" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Telas do App" data-en="Screenshots" data-es="Capturas de Pantalla">Telas do App</a>
+            <a href="#manual" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Manual Detalhado" data-en="Detailed Manual" data-es="Manual Detallado">Manual Detalhado</a>
+            <a href="#quickstart" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Guia Rápido de Uso" data-en="Quick Start Guide" data-es="Guía Rápida de Uso">Guia Rápido de Uso</a>
+            <a href="#privacy" onclick="toggleMobileMenu()" class="block text-slate-700 font-semibold hover:text-forest-800 lang-text" data-pt="Privacidade" data-en="Privacy Policy" data-es="Privacidad">Privacidade</a>
+            <a href="https://play.google.com/store" target="_blank" class="block w-full text-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all">
+                <i class="fa-brands fa-google-play mr-2"></i>
+                <span class="lang-text" data-pt="Baixar na Google Play" data-en="Get it on Google Play" data-es="Disponible en Google Play">Baixar na Google Play</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative overflow-hidden bg-gradient-to-b from-forest-900 via-forest-800 to-emerald-950 text-white py-24 lg:py-32">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Hero Text -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-emerald-700/60 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-200 backdrop-blur-sm">
+                        <i class="fa-solid fa-tree"></i>
+                        <span class="lang-text" data-pt="100% Offline-First • Coleta de Dados em Campo" data-en="100% Offline-First • Field Data Collection" data-es="100% Offline-First • Recolección de Datos en Campo">100% Offline-First • Coleta de Dados em Campo</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                        Curupira <span class="text-emerald-400">Field Sampler</span>
+                    </h1>
+
+                    <!-- Purpose Statement & Accurate File Generation Claims -->
+                    <p class="text-lg sm:text-xl text-emerald-100/90 font-normal max-w-2xl mx-auto lg:mx-0 leading-relaxed lang-text"
+                       data-pt="O app Curupira foi criado para ajudar pesquisadores, biólogos, engenheiros florestais e ecólogos a coletarem dados em prol da proteção do meio ambiente e do avanço do conhecimento científico. O aplicativo opera 100% offline e gera conjuntos de dados limpos em .csv, .xlsx, .geojson e pacotes .zip com pasta de fotos organizadas, prontos para análise direta no R, Python, Google Colab, QGIS, Excel e outras ferramentas."
+                       data-en="The Curupira app was created to help researchers, biologists, forest engineers, and ecologists collect data to protect the environment and advance scientific knowledge. Operating 100% offline, it generates clean dataset files in .csv, .xlsx, .geojson, and .zip packages with an organized photo folder, ready for analysis in R, Python, Google Colab, QGIS, Excel, and other tools."
+                       data-es="La app Curupira fue creada para ayudar a investigadores, biólogos, ingenieros forestales y ecólogos a recolectar datos en favor de la protección del medio ambiente y el avance del conocimiento científico. Funciona 100% offline y genera conjuntos de datos limpios en .csv, .xlsx, .geojson y paquetes .zip con carpeta de fotos organizada, listos para análisis directo en R, Python, Google Colab, QGIS, Excel y otras herramientas.">
+                       O app Curupira foi criado para ajudar <strong>pesquisadores, biólogos, engenheiros florestais e ecólogos</strong> a coletarem dados em prol da <strong>proteção do meio ambiente e do avanço do conhecimento científico</strong>. O aplicativo opera 100% offline e gera conjuntos de dados limpos em <strong>.csv, .xlsx, .geojson e pacotes .zip com pasta de fotos organizadas</strong>, prontos para análise direta no <strong>R, Python, Google Colab, QGIS, Excel</strong> e outras ferramentas.
+                    </p>
+
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                        <a href="https://play.google.com/store" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-8 py-4 rounded-2xl shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center space-x-3">
+                            <i class="fa-brands fa-google-play text-xl"></i>
+                            <span class="lang-text" data-pt="Baixar na Google Play" data-en="Get it on Google Play" data-es="Disponible en Google Play">Baixar na Google Play</span>
+                        </a>
+                        <a href="#quickstart" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-4 rounded-2xl backdrop-blur-md transition-all flex items-center space-x-3">
+                            <i class="fa-solid fa-rocket text-lg"></i>
+                            <span class="lang-text" data-pt="Guia Rápido de Uso" data-en="Quick Start Guide" data-es="Guía Rápido">Guia Rápido</span>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-emerald-700/50 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">100%</div>
+                            <div class="text-xs text-emerald-200/80 lang-text" data-pt="Offline & Seguro" data-en="Offline & Secure" data-es="Offline y Seguro">Offline & Seguro</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">Room DB</div>
+                            <div class="text-xs text-emerald-200/80 lang-text" data-pt="Banco Local Robusto" data-en="Robust Local DB" data-es="BD Local Robusta">Banco Local Robusto</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-white">Dataset</div>
+                            <div class="text-xs text-emerald-200/80 lang-text" data-pt="CSV / XLSX / ZIP" data-en="CSV / XLSX / ZIP" data-es="CSV / XLSX / ZIP">CSV / XLSX / ZIP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Visual / Cover Banner & Logo Showcase -->
+                <div class="lg:col-span-5 flex flex-col items-center space-y-6">
+                    <div class="relative w-full max-w-lg group">
+                        <img src="feature_graphic.png" alt="Curupira Field Sampler Cover Banner" class="w-full h-auto rounded-2xl shadow-2xl border-2 border-emerald-600/40 object-cover transform transition-transform duration-300 group-hover:scale-[1.02]">
+                        <div class="absolute -bottom-6 -left-6 bg-emerald-950/95 border border-emerald-500/40 backdrop-blur-md p-4 rounded-2xl shadow-2xl flex items-center space-x-3.5">
+                            <img src="tekoa_logo.png" alt="Curupira Logo" class="w-14 h-14 rounded-xl shadow-lg border border-emerald-700/30 object-cover">
+                            <div>
+                                <div class="text-white font-extrabold text-sm tracking-tight">Curupira</div>
+                                <div class="text-emerald-300 text-xs font-semibold">v1.0.0 • Offline-First</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Curupira Brazilian Legend Section -->
+    <section id="legend" class="py-20 bg-emerald-950 text-white relative overflow-hidden border-b border-emerald-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-gradient-to-r from-forest-900/90 to-emerald-900/90 border border-emerald-500/30 rounded-3xl p-8 sm:p-12 shadow-2xl backdrop-blur-md">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-3 flex justify-center">
+                        <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl bg-emerald-800/60 border-2 border-emerald-400/40 flex items-center justify-center text-6xl text-emerald-300 shadow-inner">
+                            <i class="fa-solid fa-tree text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-9 space-y-4 text-center lg:text-left">
+                        <div class="inline-flex items-center space-x-2 bg-emerald-700/40 border border-emerald-400/30 px-3 py-1 rounded-full text-xs font-bold text-emerald-300 uppercase tracking-widest">
+                            <i class="fa-solid fa-feather"></i>
+                            <span class="lang-text" data-pt="Mitologia & Folclore Brasileiro" data-en="Brazilian Mythology & Folklore" data-es="Mitología y Folclore Brasileño">Mitologia & Folclore Brasileiro</span>
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight lang-text"
+                            data-pt="A Lenda do Curupira: O Guardião das Florestas"
+                            data-en="The Legend of Curupira: Protector of the Forests"
+                            data-es="La Leyenda del Curupira: El Guardián de los Bosques">
+                            A Lenda do Curupira: O Guardião das Florestas
+                        </h2>
+                        <p class="text-emerald-100/90 text-base sm:text-lg leading-relaxed lang-text"
+                           data-pt="Segundo o folclore brasileiro (conforme registrado na Wikipédia), o Curupira é uma entidade lendária das matas, guardião das florestas e dos animais selvagens. É representado como um pequeno menino de cabelos vermelhos como fogo e pés virados para trás (calcanhares para a frente), cujas pegadas confusas desorientam e despistam caçadores destrutivos e invasores das matas. Inspirado por essa lenda de proteção ambiental, o app Curupira foi criado para ser o guardião dos dados dos pesquisadores em campo, garantindo precisão, simplicidade e segurança total mesmo nos ecossistemas mais isolados."
+                           data-en="According to Brazilian folklore (as documented on Wikipedia), Curupira is a legendary entity of the woods, guardian of forests and wild animals. He is depicted as a small boy with fiery red hair and backward-turned feet (heels forward), whose confusing tracks mislead destructive hunters and forest invaders. Inspired by this environmental protection legend, the Curupira app was created to be the guardian of field research data, ensuring precision, simplicity, and complete security even in the most remote ecosystems."
+                           data-es="Según el folclore brasileño (como se documenta en Wikipedia), el Curupira es una entidad legendaria del bosque, guardián de las selvas y de los animales salvajes. Es representado como un niño pequeño de cabello rojo como el fuego y pies orientados hacia atrás (talones hacia adelante), cuyas huellas confusas desorientan a cazadores destructivos e invasores de los bosques. Inspirado en esta leyenda de protección ambiental, la app Curupira fue creada para ser la guardiana de los datos de campo, garantizando precisión, simplicidad y seguridad total.">
+                           Segundo o folclore brasileiro (conforme registrado na Wikipédia), o <strong>Curupira</strong> é uma entidade lendária das matas, guardião das florestas e dos animais selvagens. É representado como um pequeno menino de <strong>cabelos vermelhos como fogo e pés virados para trás (calcanhares para a frente)</strong>, cujas pegadas confusas desorientam e despistam caçadores destrutivos e invasores das matas. Inspirado por essa lenda de proteção ambiental, o <strong>app Curupira</strong> foi criado para ser o guardião dos dados dos pesquisadores em campo, garantindo precisão, simplicidade e segurança total mesmo nos ecossistemas mais isolados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-forest-800 lang-text" data-pt="Propósito & Arquitetura" data-en="Purpose & Architecture" data-es="Propósito y Arquitectura">Propósito & Arquitetura</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight lang-text"
+                    data-pt="Simples, Funcional, Útil e Barato"
+                    data-en="Simple, Functional, Useful, and Affordable"
+                    data-es="Simple, Funcional, Útil y Económico">
+                    Simples, Funcional, Útil e Barato
+                </h3>
+                <p class="text-slate-600 text-base sm:text-lg lang-text"
+                   data-pt="O Curupira foi projetado para eliminar complicações no campo, permitindo coleta rápida, gráficos instantâneos e exportação direta sem intermediários."
+                   data-en="Curupira was designed to eliminate field complications, allowing fast data entry, instant charting, and direct dataset export without middlemen."
+                   data-es="Curupira fue diseñado para eliminar complicaciones en el campo, permitiendo recolección rápida, gráficos instantáneos y exportación directa sin intermediarios.">
+                   O Curupira foi projetado para eliminar complicações no campo, permitindo coleta rápida, avaliação da amostra e exportação direta sem intermediários.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="100% Offline-First (Room DB)" data-en="100% Offline-First (Room DB)" data-es="100% Offline-First (Room DB)">100% Offline-First (Room DB)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Banco de dados SQLite local robusto via Android Room. Zero dependência de conexão com a internet ou servidores em nuvem durante a coleta em campo."
+                       data-en="Robust local SQLite database via Android Room. Zero dependency on internet connection or cloud servers during field collection."
+                       data-es="Robusta base de datos SQLite local a través de Android Room. Cero dependencia de conexión a internet o servidores en la nube durante la recolección en campo.">
+                       Banco de dados SQLite local robusto via Android Room. Zero dependência de conexão com a internet ou servidores em nuvem durante a coleta em campo.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Fast Variable Registration -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="Cadastro Rápido de Variáveis" data-en="Fast Variable Registration" data-es="Registro Rápido de Variables">Cadastro Rápido de Variáveis</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Ao cadastrar variáveis no seu projeto, basta digitar o nome da variável de forma direta! O aplicativo lida com a organização dos dados de forma intuitiva e ágil."
+                       data-en="When registering variables in your project, simply type the variable name directly! The app manages data organization intuitively and efficiently."
+                       data-es="¡Al registrar variables en su proyecto, simplemente escriba el nombre de la variable de forma directa! La aplicación gestiona la organización de forma intuitive.">
+                       Ao cadastrar variáveis no seu projeto, <strong>basta digitar o nome da variável de forma direta</strong>! O aplicativo lida com a organização dos dados de forma intuitiva e ágil.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="Captura Automática de GPS" data-en="Auto-GPS High Precision" data-es="Captura Automática de GPS">Captura Automática de GPS</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Obtenha coordenadas geográficas de alta precisão instantaneamente usando Priority.PRIORITY_HIGH_ACCURACY via Google Fused Location Services."
+                       data-en="Obtain high-precision geographic coordinates instantly using Priority.PRIORITY_HIGH_ACCURACY via Google Fused Location Services."
+                       data-es="Obtenga coordenadas geográficas de alta precisión al instante usando Priority.PRIORITY_HIGH_ACCURACY a través de Google Fused Location Services.">
+                       Obtenha coordenadas geográficas de alta precisão instantaneamente usando Priority.PRIORITY_HIGH_ACCURACY via Google Fused Location Services.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="Fotos Compactadas (CameraX)" data-en="Compressed Photos (CameraX)" data-es="Fotos Comprimidas (CameraX)">Fotos Compactadas (CameraX)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Capture fotos de campo diretamente por observação utilizando integração CameraX com compactação automática para otimizar o armazenamento do dispositivo."
+                       data-en="Capture field photos directly per observation using CameraX integration with automatic compression to optimize device storage."
+                       data-es="Capture fotos de campo directamente por observación utilizando integración con CameraX y compresión automática para optimizar el almacenamiento del dispositivo.">
+                       Capture fotos de campo diretamente por observação utilizando integração CameraX com compactação automática para otimizar o armazenamento do dispositivo.
+                    </p>
+                </div>
+
+                <!-- Feature 5: Detailed Analytics Explanation -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="Gráficos & Estatísticas em Tempo Real" data-en="Real-time Charts & Stats" data-es="Gráficos y Estadísticas en Tiempo Real">Gráficos & Estatísticas em Tempo Real</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Acompanhe a Curva do Coletor para suficiência amostral e a Curva de Distribuição de Densidade acompanhada das estatísticas de Média, Desvio Padrão e Mediana diretamente no app."
+                       data-en="Track the Collector's Curve for sampling sufficiency and the Density Distribution Curve accompanied by Mean, Std Dev, and Median stats directly in the app."
+                       data-es="Siga la Curva del Colector para suficiencia de muestreo y la Curva de Distribución de Densidad con Média, Desviación Estándar y Mediana directamente en la app.">
+                       Acompanhe a <strong>Curva do Coletor</strong> para suficiência amostral e a <strong>Curva de Distribuição de Densidade</strong> com estatísticas de <strong>Média, Desvio Padrão e Mediana</strong> diretamente no aplicativo.
+                    </p>
+                </div>
+
+                <!-- Feature 6: Dataset Export & Analysis Tools -->
+                <div class="bg-slate-50 hover:bg-forest-50/50 p-8 rounded-3xl border border-slate-200 hover:border-forest-300 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl mb-6 shadow-md group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-file-csv"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3 lang-text" data-pt="Conjuntos de Dados Prontos (R, Python...)" data-en="Ready Dataset Files (R, Python...)" data-es="Conjuntos de Datos Listos (R, Python...)">Conjuntos de Dados Prontos (R, Python...)</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Gere arquivos de dados limpos em .csv, .xlsx, .geojson e pacotes .zip contendo pasta de fotos organizada. Totalmente compatível com R, Python, Google Colab, QGIS, Excel e outras plataformas."
+                       data-en="Generates clean dataset files in .csv, .xlsx, .geojson, and .zip packages containing an organized photo folder. Fully compatible with R, Python, Google Colab, QGIS, Excel, and other platforms."
+                       data-es="Genera archivos de datos limpios en .csv, .xlsx, .geojson y paquetes .zip que contienen una carpeta de fotos organizada. Totalmente compatible con R, Python, Google Colab, QGIS, Excel y más.">
+                       Gere arquivos de dados limpos em <strong>.csv, .xlsx, .geojson e pacotes .zip</strong> com pasta de fotos organizada, totalmente prontos para <strong>R, Python, Google Colab, QGIS, Excel</strong> e mais.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Screenshots Showcase Section -->
+    <section id="screenshots" class="py-24 bg-slate-900 text-white border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-400 lang-text" data-pt="Interface do Usuário" data-en="User Interface" data-es="Interfaz de Usuario">Interface do Usuário</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight lang-text"
+                    data-pt="Telas do Aplicativo"
+                    data-en="App Screenshots"
+                    data-es="Capturas de Pantalla del App">
+                    Telas do Aplicativo
+                </h3>
+                <p class="text-slate-300 text-base sm:text-lg lang-text"
+                   data-pt="Interface moderna e intuitiva desenvolvida em Jetpack Compose, adaptada para agilidade em campo e suporte nativo a múltiplos idiomas."
+                   data-en="Modern and intuitive interface built with Jetpack Compose, tailored for field efficiency with native multi-language support."
+                   data-es="Interfaz moderna e intuitiva desarrollada en Jetpack Compose, adaptada para agilidad en campo y soporte nativo multilingüe.">
+                   Interface moderna e intuitiva desenvolvida em Jetpack Compose, adaptada para agilidade em campo e suporte nativo a múltiplos idiomas.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Screenshot 1: Novo Projeto -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_novo_projeto.jpg" alt="Novo Projeto" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Novo Projeto" data-en="New Project" data-es="Nuevo Proyecto">Novo Projeto</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Criação simples de projetos com nome, descrição e adição rápida de variáveis."
+                               data-en="Simple project creation with name, description, and fast variable setup."
+                               data-es="Creación sencilla de proyectos con nombre, descripción y adición rápida de variables.">
+                               Criação simples de projetos com nome, descrição e adição rápida de variáveis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot 2: Editar Observação -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_editar_observacao.jpg" alt="Editar Observação" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Editar Observação" data-en="Edit Observation" data-es="Editar Observación">Editar Observação</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Coleta direta de dados de espécimes, medições numéricas e fotos via CameraX."
+                               data-en="Direct data collection for specimens, numerical measurements, and photos via CameraX."
+                               data-es="Captura directa de datos de especímenes, mediciones numéricas y fotos vía CameraX.">
+                               Coleta direta de dados de espécimes, medições numéricas e fotos via CameraX.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot 3: Lista de Projetos em Espanhol -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_lista_projetos_es.jpg" alt="Lista de Projetos em Espanhol" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Lista de Projetos em Espanhol" data-en="Project List in Spanish" data-es="Lista de Proyectos en Español">Lista de Projetos em Espanhol</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Gerenciamento prático dos projetos com suporte multilíngue nativo (PT, EN, ES)."
+                               data-en="Convenient project management with native multi-language support (PT, EN, ES)."
+                               data-es="Gestión práctica de proyectos con soporte multilingüe nativo (PT, EN, ES).">
+                               Gerenciamento prático dos projetos com suporte multilíngue nativo (PT, EN, ES).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot 4: Unidades Amostrais com GPS -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_unidades_amostrais_gps.jpg" alt="Unidades Amostrais com GPS" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Unidades Amostrais com GPS" data-en="Sampling Units with GPS" data-es="Unidades de Muestreo con GPS">Unidades Amostrais com GPS</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Organização de parcelas com captura automática de coordenadas geográficas de alta precisão."
+                               data-en="Plot organization with automatic high-precision geographic coordinate capture."
+                               data-es="Organización de parcelas con captura automática de coordenadas de alta precisión.">
+                               Organização de parcelas com captura automática de coordenadas geográficas de alta precisão.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot 5: Curva de Distribuição de Densidade em Espanhol -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_curva_densidade_es.jpg" alt="Curva de Distribuição de Densidade em Espanhol" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Curva de Distribuição de Densidade em Espanhol" data-en="Density Distribution Curve in Spanish" data-es="Curva de Distribución de Densidad en Español">Curva de Distribuição de Densidade em Espanhol</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Análise estatística gráfica com curva de densidade KDE, Média, Desvio Padrão e Mediana."
+                               data-en="Graphical statistical analysis featuring KDE density curve, Mean, Standard Deviation, and Median."
+                               data-es="Análisis estadístico gráfico con curva de densidad KDE, Media, Desviación Estándar y Mediana.">
+                               Análise estatística gráfica com curva de densidade KDE, Média, Desvio Padrão e Mediana.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot 6: Curva do Coletor em Inglês -->
+                <div class="bg-slate-800/80 rounded-3xl border border-slate-700/80 overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all group flex flex-col">
+                    <div class="p-4 bg-slate-950/60 flex justify-center items-center">
+                        <img src="screenshots/screenshot_curva_coletor_en.jpg" alt="Curva do Coletor em Inglês" class="h-80 w-auto rounded-2xl object-contain shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-6 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-1 lang-text" data-pt="Curva do Coletor em Inglês" data-en="Collector's Curve in English" data-es="Curva del Colector en Inglés">Curva do Coletor em Inglês</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed lang-text"
+                               data-pt="Gráfico de acúmulo de espécies para verificação instantânea da suficiência amostral em campo."
+                               data-en="Species accumulation chart for instant verification of sampling sufficiency in the field."
+                               data-es="Gráfico de acumulación de especies para verificación instantánea de suficiencia de muestreo.">
+                               Gráfico de acúmulo de espécies para verificação instantânea da suficiência amostral em campo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Manual Section -->
+    <section id="manual" class="py-24 bg-slate-100 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-forest-800 lang-text" data-pt="Documentação Técnica" data-en="Technical Documentation" data-es="Documentación Técnica">Documentação Técnica</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight lang-text"
+                    data-pt="Manual Detalhado para Pesquisadores"
+                    data-en="Detailed Manual for Researchers"
+                    data-es="Manual Detallado para Investigadores">
+                    Manual Detalhado para Pesquisadores
+                </h3>
+                <p class="text-slate-600 text-base sm:text-lg lang-text"
+                   data-pt="Passo a passo completo para configurar projetos, variáveis, unidades amostrais e analisar seus dados."
+                   data-en="Complete step-by-step guide to configure projects, variables, sampling units, and analyze your datasets."
+                   data-es="Guía paso a paso completa para configurar proyectos, variables, unidades de muestreo y analizar sus conjuntos de datos.">
+                   Passo a passo completo para configurar projetos, variáveis, unidades amostrais e analisar seus dados.
+                </p>
+            </div>
+
+            <!-- Manual Steps Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-lg">1</div>
+                        <h4 class="text-xl font-bold text-slate-900 lang-text" data-pt="Criação de Projeto & Variáveis" data-en="Project Creation & Variables" data-es="Creación de Proyecto y Variables">Criação de Projeto & Variáveis</h4>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Ao abrir o Curupira, crie um novo projeto informando nome, descrição e protocolo. Ao cadastrar variáveis, basta digitar o nome da variável de forma direta no formulário."
+                       data-en="When opening Curupira, create a new project with name, description, and protocol. When registering variables, simply type the variable name directly in the form."
+                       data-es="Al abrir Curupira, cree un nuevo proyecto ingresando nombre, descripción y protocolo. Al registrar variables, simplemente escriba el nombre de la variable de forma directa.">
+                       Ao abrir o Curupira, crie um novo projeto informando nome, descrição e protocolo. Ao cadastrar variáveis, <strong>basta digitar o nome da variável de forma direta</strong> no formulário.
+                    </p>
+                    <ul class="text-xs text-slate-500 space-y-1.5 list-disc list-inside">
+                        <li class="lang-text" data-pt="Criação de variáveis ultra rápida digitando apenas o nome." data-en="Ultra-fast variable setup by typing name only." data-es="Creación súper rápida de variables escribiendo solo el nombre.">Criação de variáveis ultra rápida digitando apenas o nome.</li>
+                        <li class="lang-text" data-pt="Armazenamento 100% local em Room DB seguro." data-en="100% local storage in secure Room DB." data-es="Almacenamiento 100% local en Room DB seguro.">Armazenamento 100% local em Room DB seguro.</li>
+                    </ul>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-lg">2</div>
+                        <h4 class="text-xl font-bold text-slate-900 lang-text" data-pt="Unidades Amostrais & Coordenadas GPS" data-en="Sampling Units & GPS Coordinates" data-es="Unidades de Muestreo y Coordenadas GPS">Unidades Amostrais & Coordenadas GPS</h4>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Organize o trabalho de campo em Parcelas, Transectos ou Pontos. Utilize o botão de captura automática de GPS de alta precisão para registrar latitude, longitude e altitude instantaneamente no local."
+                       data-en="Organize field work into Plots, Transects, or Points. Use the high-precision auto-GPS capture button to record latitude, longitude, and altitude instantly on-site."
+                       data-es="Organice el trabajo de campo en Parcelas, Transectos o Puntos. Utilice el botón de captura automática de GPS de alta precisión para registrar latitud, longitud y altitud al instante en el sitio.">
+                       Organize o trabalho de campo em Parcelas, Transectos ou Pontos. Utilize o botão de captura automática de GPS de alta precisão para registrar latitude, longitude e altitude instantaneamente no local.
+                    </p>
+                    <ul class="text-xs text-slate-500 space-y-1.5 list-disc list-inside">
+                        <li class="lang-text" data-pt="Prioridade de alta precisão via FusedLocationClient." data-en="High-precision priority via FusedLocationClient." data-es="Prioridad de alta precisión vía FusedLocationClient.">Prioridade de alta precisão via FusedLocationClient.</li>
+                        <li class="lang-text" data-pt="Suporte a múltiplos tipos de unidades de amostragem." data-en="Support for multiple sampling unit types." data-es="Soporte para múltiples tipos de unidades de muestreo.">Suporte a múltiplos tipos de unidades de amostragem.</li>
+                    </ul>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-lg">3</div>
+                        <h4 class="text-xl font-bold text-slate-900 lang-text" data-pt="Observações & Câmera CameraX" data-en="Observations & CameraX" data-es="Observaciones y Cámara CameraX">Observações & Câmera CameraX</h4>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Registre indivíduos e ocorrências no campo. Anexe fotografias de alta qualidade capturadas diretamente pela integração CameraX com compactação automática para otimizar o espaço do seu aparelho."
+                       data-en="Record individuals and occurrences in the field. Attach high-quality photos captured directly via CameraX integration with automatic compression to save device storage."
+                       data-es="Registre individuos y ocurrencias en el campo. Adjunte fotos de alta calidad capturadas directamente con integración CameraX y compresión automática para optimizar espacio.">
+                       Registre indivíduos e ocorrências no campo. Anexe fotografias de alta qualidade capturadas diretamente pela integração CameraX com compactação automática para otimizar o espaço do seu aparelho.
+                    </p>
+                    <ul class="text-xs text-slate-500 space-y-1.5 list-disc list-inside">
+                        <li class="lang-text" data-pt="Formulários dinâmicos e intuitivos." data-en="Dynamic and intuitive forms." data-es="Formularios dinámicos e intuitivos.">Formulários dinâmicos e intuitivos.</li>
+                        <li class="lang-text" data-pt="Vinculação direta de fotos por indivíduo." data-en="Direct photo linking per individual." data-es="Vinculación directa de fotos por individuo.">Vinculação direta de fotos por indivíduo.</li>
+                    </ul>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-lg">4</div>
+                        <h4 class="text-xl font-bold text-slate-900 lang-text" data-pt="Análise & Exportação de Conjuntos de Dados" data-en="Analytics & Dataset Export" data-es="Análisis y Exportación de Datos">Análise & Exportação de Conjuntos de Dados</h4>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Acompanhe a suficiência amostral através da Curva do Coletor e verifique a Curva de Distribuição de Densidade (com Média, Desvio Padrão e Mediana). Exporte o pacote em .zip (com CSVs, GeoJSON e pasta fotos/) ou .xlsx prontos para R, Python, Google Colab, QGIS e Excel."
+                       data-en="Monitor sampling sufficiency through the Collector's Curve and check the Density Distribution Curve (with Mean, Std Dev, and Median). Export dataset packages in .zip (with CSVs, GeoJSON, and photo folder) or .xlsx ready for R, Python, Google Colab, QGIS, and Excel."
+                       data-es="Monitoree la suficiencia de muestreo a través de la Curva del Colector y verifique la Curva de Distribución de Densidad (con Média, Desviación Estándar y Mediana). Exporte en .zip o .xlsx listos para R, Python, Google Colab, QGIS y Excel.">
+                       Acompanhe a suficiência amostral através da <strong>Curva do Coletor</strong> e verifique a <strong>Curva de Distribuição de Densidade (com Média, Desvio Padrão e Mediana)</strong>. Exporte conjuntos de dados limpos em <strong>.zip (com CSVs, GeoJSON e fotos) ou .xlsx</strong> prontos para <strong>R, Python, Google Colab, QGIS e Excel</strong>.
+                    </p>
+                    <ul class="text-xs text-slate-500 space-y-1.5 list-disc list-inside">
+                        <li class="lang-text" data-pt="Gráficos interativos renderizados em Canvas nativo." data-en="Interactive charts rendered in native Canvas." data-es="Gráficos interactivos renderizados en Canvas nativo.">Gráficos interativos renderizados em Canvas nativo.</li>
+                        <li class="lang-text" data-pt="Formatos padronizados e sem necessidade de tratamento." data-en="Standardized formats with zero cleanup required." data-es="Formatos estandarizados sin necesidad de limpieza.">Formatos padronizados e sem necessidade de tratamento.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Guide Section (Guia Rápido de Uso) -->
+    <section id="quickstart" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-forest-800 lang-text" data-pt="Guia Rápido" data-en="Quick Guide" data-es="Guía Rápida">Guia Rápido</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight lang-text"
+                    data-pt="Guia Rápido de Uso"
+                    data-en="Quick Start Guide"
+                    data-es="Guía Rápida de Uso">
+                    Guia Rápido de Uso
+                </h3>
+                <p class="text-slate-600 text-base sm:text-lg lang-text"
+                   data-pt="Três passos simples para começar a coletar e analisar seus dados de campo com o Curupira."
+                   data-en="Three simple steps to start collecting and analyzing your field data with Curupira."
+                   data-es="Tres pasos sencillos para comenzar a recolectar y analizar sus datos de campo con Curupira.">
+                   Três passos simples para começar a coletar e analisar seus dados de campo com o Curupira.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step A: Google Play CTA -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-xl shadow mx-auto">1</div>
+                    <h4 class="text-lg font-bold text-slate-900 lang-text" data-pt="Instale na Google Play" data-en="Get it on Google Play" data-es="Consíguelo en Google Play">Instale na Google Play</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Baixe o Curupira Field Sampler diretamente na Google Play Store e instale no seu dispositivo Android."
+                       data-en="Download Curupira Field Sampler directly from the Google Play Store and install it on your Android device."
+                       data-es="Descargue Curupira Field Sampler directamente desde Google Play Store e instálelo en su dispositivo Android.">
+                       Baixe o Curupira Field Sampler diretamente na Google Play Store e instale no seu dispositivo Android.
+                    </p>
+                    <a href="https://play.google.com/store" target="_blank" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all mt-2">
+                        <i class="fa-brands fa-google-play"></i>
+                        <span class="lang-text" data-pt="Baixar na Google Play" data-en="Get on Google Play" data-es="Ver en Google Play">Baixar na Google Play</span>
+                    </a>
+                </div>
+
+                <!-- Step B -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-xl shadow mx-auto">2</div>
+                    <h4 class="text-lg font-bold text-slate-900 lang-text" data-pt="Crie Projetos & Variáveis" data-en="Create Project & Variables" data-es="Cree Proyecto y Variables">Crie Projetos & Variáveis</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Crie seu projeto ambiental e adicione variáveis digitando o nome delas. Adicione unidades amostrais com registro automático de GPS."
+                       data-en="Create your environmental project and add variables by typing their names. Add sampling units with automatic GPS recording."
+                       data-es="Cree su proyecto ambiental y agregue variables escribiendo sus nombres. Agregue unidades de muestreo con registro automático de GPS.">
+                       Crie seu projeto ambiental e adicione variáveis digitando o nome delas. Adicione unidades amostrais com registro automático de GPS.
+                    </p>
+                    <div class="bg-emerald-100 text-emerald-900 p-2.5 rounded-xl text-xs font-semibold">
+                        <i class="fa-solid fa-circle-check text-emerald-700"></i> Simples & Rápido
+                    </div>
+                </div>
+
+                <!-- Step C -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 space-y-4 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-forest-800 text-white font-extrabold flex items-center justify-center text-xl shadow mx-auto">3</div>
+                    <h4 class="text-lg font-bold text-slate-900 lang-text" data-pt="Analise & Exporte Datasets" data-en="Analyze & Export Datasets" data-es="Analice y Exporte Datos">Analise & Exporte Datasets</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed lang-text"
+                       data-pt="Acompanhe gráficos da Curva do Coletor e Curva de Densidade diretamente no aplicativo. Exporte o conjunto de dados limpo (.csv, .xlsx, .geojson, .zip) para o R, Python ou Colab."
+                       data-en="Track Collector's Curve and Density Curve charts directly in the app. Export the clean dataset (.csv, .xlsx, .geojson, .zip) to R, Python, or Colab."
+                       data-es="Siga gráficos de Curva del Colector y Distribución de Densidad en la app. Exporte conjuntos de datos limpios (.csv, .xlsx, .geojson, .zip) para R, Python o Colab.">
+                       Acompanhe gráficos da Curva do Coletor e Curva de Densidade diretamente no aplicativo. Exporte o conjunto de dados limpo (.csv, .xlsx, .geojson, .zip) para o R, Python ou Colab.
+                    </p>
+                    <div class="bg-slate-900 text-emerald-400 p-2.5 rounded-xl font-mono text-xs">
+                        dataset.zip / dataset.csv
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commercial CTA Banner Section -->
+    <section class="py-16 bg-gradient-to-r from-forest-900 to-emerald-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight lang-text"
+                data-pt="Pronto para otimizar suas coletas de campo?"
+                data-en="Ready to optimize your field collection?"
+                data-es="¿Listo para optimizar sus recolecciones de campo?">
+                Pronto para otimizar suas coletas de campo?
+            </h2>
+            <p class="text-emerald-100 text-base sm:text-lg max-w-2xl mx-auto lang-text"
+               data-pt="O Curupira Field Sampler é a solução ideal para pesquisadores, consultores ambientais e estudantes de pós-graduação."
+               data-en="Curupira Field Sampler is the ideal solution for researchers, environmental consultants, and graduate students."
+               data-es="Curupira Field Sampler es la solución ideal para investigadores, consultores ambientales y estudiantes.">
+               O Curupira Field Sampler é a solução ideal para pesquisadores, consultores ambientais e estudantes de pós-graduação.
+            </p>
+            <div class="pt-2">
+                <a href="https://play.google.com/store" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-10 py-4 rounded-2xl shadow-2xl transition-all inline-flex items-center space-x-3 text-lg">
+                    <i class="fa-brands fa-google-play text-2xl"></i>
+                    <span class="lang-text" data-pt="Baixar na Google Play Store" data-en="Download on Google Play Store" data-es="Descargar en Google Play Store">Baixar na Google Play Store</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Policy Section -->
+    <section id="privacy" class="py-24 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-forest-800 text-white flex items-center justify-center text-2xl shadow">
+                        <i class="fa-solid fa-shield-cat"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-900 lang-text" data-pt="Política de Privacidade" data-en="Privacy Policy" data-es="Política de Privacidad">Política de Privacidade</h2>
+                        <p class="text-xs text-slate-500">Curupira Field Sampler • 100% Offline Architecture</p>
+                    </div>
+                </div>
+
+                <div class="prose prose-slate max-w-none space-y-4 text-sm text-slate-600 leading-relaxed">
+                    <p class="lang-text"
+                       data-pt="O Curupira Field Sampler foi construído desde a sua concepção com base no princípio de privacidade absoluta e funcionamento 100% offline ('Offline-First')."
+                       data-en="Curupira Field Sampler was built from the ground up based on the principle of absolute privacy and 100% offline operation ('Offline-First')."
+                       data-es="Curupira Field Sampler fue construido desde cero basado en el principio de privacidad absoluta y funcionamiento 100% offline ('Offline-First').">
+                       O Curupira Field Sampler foi construído desde a sua concepção com base no princípio de privacidade absoluta e funcionamento 100% offline ('Offline-First').
+                    </p>
+
+                    <h4 class="text-base font-bold text-slate-900 pt-2 lang-text" data-pt="1. Coleta e Armazenamento de Dados" data-en="1. Data Collection and Storage" data-es="1. Recopilación y Almacenamiento de Datos">1. Coleta e Armazenamento de Dados</h4>
+                    <p class="lang-text"
+                       data-pt="Todos os dados inseridos no aplicativo (projetos, unidades amostrais, observações, variáveis e fotografias) são armazenados exclusivamente no banco de dados local do seu dispositivo (Android Room DB) e no armazenamento interno seguro. Nenhum dado é enviado para servidores externos, nuvem ou terceiros."
+                       data-en="All data entered into the application (projects, sampling units, observations, variables, and photographs) is stored exclusively in your device's local database (Android Room DB) and secure internal storage. No data is sent to external servers, cloud storage, or third parties."
+                       data-es="Todos los datos ingresados en la aplicación (proyectos, unidades de muestreo, observaciones, variables y fotografías) se almacenan exclusivamente en la base de datos local de su dispositivo (Android Room DB) y almacenamiento interno seguro. Ningún dato se envía a servidores externos o terceros.">
+                       Todos os dados inseridos no aplicativo (projetos, unidades amostrais, observações, variáveis e fotografias) são armazenados exclusivamente no banco de dados local do seu dispositivo (Android Room DB) e no armazenamento interno seguro. Nenhum dado é enviado para servidores externos, nuvem ou terceiros.
+                    </p>
+
+                    <h4 class="text-base font-bold text-slate-900 pt-2 lang-text" data-pt="2. Dados de Geolocalização (GPS)" data-en="2. Geolocation Data (GPS)" data-es="2. Datos de Geolocalización (GPS)">2. Dados de Geolocalização (GPS)</h4>
+                    <p class="lang-text"
+                       data-pt="O acesso ao GPS (FusedLocationProviderClient) é utilizado estritamente para registrar as coordenadas geográficas das unidades amostrais no campo a pedido do usuário. As coordenadas permanecem estritamente no dispositivo e são incluídas apenas nos arquivos exportados (CSV, GeoJSON, ZIP) gerados pelo próprio usuário."
+                       data-en="GPS access (FusedLocationProviderClient) is used strictly to record geographic coordinates of sampling units in the field upon user request. Coordinates remain strictly on the device and are included only in exported dataset files (CSV, GeoJSON, ZIP) generated by the user."
+                       data-es="El acceso al GPS (FusedLocationProviderClient) se utiliza estrictamente para registrar las coordenadas geográficas de las unidades de muestreo a petición del usuario. Permanecen en el dispositivo y solo se incluyen en los archivos exportados por el usuario.">
+                       O acesso ao GPS (FusedLocationProviderClient) é utilizado estritamente para registrar as coordenadas geográficas das unidades amostrais no campo a pedido do usuário. As coordenadas permanecem estritamente no dispositivo e são incluídas apenas nos arquivos exportados (CSV, GeoJSON, ZIP) gerados pelo próprio usuário.
+                    </p>
+
+                    <h4 class="text-base font-bold text-slate-900 pt-2 lang-text" data-pt="3. Acesso à Câmera" data-en="3. Camera Access" data-es="3. Acceso a la Cámara">3. Acesso à Câmera</h4>
+                    <p class="lang-text"
+                       data-pt="A câmera do dispositivo é acessada via CameraX exclusivamente para capturar fotos de espécimes ou parcelas de campo quando o usuário solicita explicitamente. As imagens são compactadas e armazenadas no diretório de arquivos locais da aplicação."
+                       data-en="The device camera is accessed via CameraX exclusively to capture photos of specimens or field plots when explicitly requested by the user. Images are compressed and stored in the application's local file directory."
+                       data-es="Se accede a la cámara del dispositivo a través de CameraX exclusivamente para capturar fotos de especímenes o parcelas cuando el usuario lo solicita. Las imágenes se comprimen y almacenan en el directorio local.">
+                       A câmera do dispositivo é acessada via CameraX exclusivamente para capturar fotos de espécimes ou parcelas de campo quando o usuário solicita explicitamente. As imagens são compactadas e armazenadas no diretório de arquivos locais da aplicação.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <img src="tekoa_logo.png" alt="Curupira Logo" class="w-10 h-10 rounded-xl shadow-lg border border-emerald-700/30 object-cover">
+                <div>
+                    <span class="text-white font-bold text-lg">Curupira Field Sampler</span>
+                    <span class="block text-xs text-slate-500 lang-text" data-pt="Software de Amostragem Científica • 100% Offline" data-en="Scientific Sampling Software • 100% Offline" data-es="Software de Muestreo Científico • 100% Offline">Software de Amostragem Científica • 100% Offline</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6 text-sm">
+                <a href="#home" class="hover:text-white transition-colors lang-text" data-pt="Início" data-en="Home" data-es="Inicio">Início</a>
+                <a href="#legend" class="hover:text-white transition-colors lang-text" data-pt="Lenda" data-en="Legend" data-es="Leyenda">Lenda</a>
+                <a href="#features" class="hover:text-white transition-colors lang-text" data-pt="Recursos" data-en="Features" data-es="Características">Recursos</a>
+                <a href="#screenshots" class="hover:text-white transition-colors lang-text" data-pt="Telas" data-en="Screenshots" data-es="Capturas de Pantalla">Telas</a>
+                <a href="#manual" class="hover:text-white transition-colors lang-text" data-pt="Manual" data-en="Manual" data-es="Manual">Manual</a>
+                <a href="#privacy" class="hover:text-white transition-colors lang-text" data-pt="Privacidade" data-en="Privacy" data-es="Privacidad">Privacidade</a>
+            </div>
+
+            <div class="text-xs text-slate-500 text-center md:text-right">
+                &copy; 2025 Curupira Project. <span class="lang-text" data-pt="Todos os direitos reservados." data-en="All rights reserved." data-es="Todos los derechos reservados.">Todos os direitos reservados.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Multilingual Switching & Mobile Menu -->
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function setLanguage(lang) {
+            ['pt', 'en', 'es'].forEach(l => {
+                const btn = document.getElementById(`lang-btn-${l}`);
+                if (l === lang) {
+                    btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-forest-800 text-white shadow-sm transition-all";
+                } else {
+                    btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+                }
+            });
+
+            document.querySelectorAll('.lang-text').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) {
+                    el.innerHTML = text;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
